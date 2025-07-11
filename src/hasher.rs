@@ -1,6 +1,7 @@
 use dashmap::{DashMap, DashSet};
-use gix::features::hash::hasher;
-use gix::objs::encode::loose_header;
+use gix_hash::{Kind as HashKind};
+use gix_object::{Kind as ObjectKind};
+use gix_object::encode::loose_header;
 use rayon::prelude::*;
 
 use std::fs;
@@ -45,11 +46,12 @@ pub fn git_hash(file_set: DashSet<PathBuf>, cwd: &str) -> Option<HashMap<String,
     let key = normalize_path(&base_cwd, file_path);
 
     if let Ok(bytes) = bytes_results {
-      let mut hasher = hasher(gix::hash::Kind::Sha1);
-      hasher.update(&loose_header(gix::objs::Kind::Blob, bytes.len() as u64));
+      let mut hasher = gix_hash::hasher(HashKind::Sha1);
+      let header = loose_header(ObjectKind::Blob, bytes.len() as u64);
+      hasher.update(&header);
       hasher.update(&bytes);
-
-      map.insert(key, Some(hex::encode(hasher.digest())));
+      let hash = hasher.try_finalize().map(|id| id.to_hex().to_string()).ok();
+      map.insert(key, hash);
     } else {
       map.insert(key, None);
     }
@@ -74,11 +76,12 @@ pub fn git_hash_vec(files: Vec<PathBuf>, cwd: &str) -> Option<HashMap<String, Op
     let key = normalize_path(&base_cwd, file_path);
 
     if let Ok(bytes) = bytes_results {
-      let mut hasher = hasher(gix::hash::Kind::Sha1);
-      hasher.update(&loose_header(gix::objs::Kind::Blob, bytes.len() as u64));
+      let mut hasher = gix_hash::hasher(HashKind::Sha1);
+      let header = loose_header(ObjectKind::Blob, bytes.len() as u64);
+      hasher.update(&header);
       hasher.update(&bytes);
-
-      map.insert(key, Some(hex::encode(hasher.digest())));
+      let hash = hasher.try_finalize().map(|id| id.to_hex().to_string()).ok();
+      map.insert(key, hash);
     } else {
       map.insert(key, None);
     }
