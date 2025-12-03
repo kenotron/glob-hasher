@@ -46,7 +46,7 @@ pub fn git_hash(file_set: DashSet<PathBuf>, cwd: &str) -> Option<HashMap<String,
 
     if let Ok(bytes) = bytes_results {
       let mut hasher = hasher(gix::hash::Kind::Sha1);
-      hasher.update(&loose_header(gix::objs::Kind::Blob, bytes.len()));
+      hasher.update(&loose_header(gix::objs::Kind::Blob, bytes.len() as u64));
       hasher.update(&bytes);
 
       map.insert(key, Some(hex::encode(hasher.digest())));
@@ -75,7 +75,7 @@ pub fn git_hash_vec(files: Vec<PathBuf>, cwd: &str) -> Option<HashMap<String, Op
 
     if let Ok(bytes) = bytes_results {
       let mut hasher = hasher(gix::hash::Kind::Sha1);
-      hasher.update(&loose_header(gix::objs::Kind::Blob, bytes.len()));
+      hasher.update(&loose_header(gix::objs::Kind::Blob, bytes.len() as u64));
       hasher.update(&bytes);
 
       map.insert(key, Some(hex::encode(hasher.digest())));
