@@ -1,0 +1,14 @@
+{
+  "name": "glob-hasher",
+  "image": "mcr.microsoft.com/devcontainers/base:noble",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "installYarnUsingApt": false,
+      "pnpmVersion": "none"
+    },
+    "ghcr.io/devcontainers/features/rust:1": {},
+    "ghcr.io/devcontainers/features/sshd:1": {}
+  }
+}
